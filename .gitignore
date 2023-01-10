@@ -1,9 +1,10 @@
 .gradle
 build/
+bin/
 *.idea/
 *.iml
 *.log
 tmp-migration
-
 out
 .DS_Store
+.vscode

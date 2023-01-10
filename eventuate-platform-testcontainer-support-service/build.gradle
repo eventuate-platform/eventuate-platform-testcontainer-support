@@ -1,0 +1,8 @@
+dependencies {
+    implementation "io.eventuate.common:eventuate-common-testcontainers"
+    implementation "io.eventuate.messaging.kafka:eventuate-messaging-kafka-testcontainers"
+
+    // TODO shouldn't need to do this too
+    implementation "org.testcontainers:testcontainers:$testContainersVersion"
+
+}
