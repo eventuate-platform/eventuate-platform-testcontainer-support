@@ -20,12 +20,12 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
 
 
     public ServiceContainer() {
-        this("./Dockerfile");
+        this("./Dockerfile", "../gradle.properties");
     }
 
-    public ServiceContainer(String dockerFile) {
+    public ServiceContainer(String dockerFile, String gradlePropertiesPath) {
         super(new ImageFromDockerfile().withDockerfile(FileSystems.getDefault().getPath(dockerFile))
-                .withBuildArgs(buildArgsFromGradleProperties()));
+                .withBuildArgs(buildArgsFromGradleProperties(gradlePropertiesPath)));
         waitingFor(Wait.forHealthcheck());
         // Needed this to avoid missing bean TramSpringCloudSleuthIntegrationCommonConfiguration brave.Tracing
         withEnv("SPRING_SLEUTH_ENABLED", "true");
@@ -37,10 +37,10 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         return 8080;
     }
 
-    private static Map<String, String> buildArgsFromGradleProperties() {
+    private static Map<String, String> buildArgsFromGradleProperties(String gradlePropertiesPath) {
         Properties gradleProperties = new Properties();
 
-        try (InputStream is = Files.newInputStream(Paths.get("../gradle.properties"))) {
+        try (InputStream is = Files.newInputStream(Paths.get(gradlePropertiesPath))) {
             gradleProperties.load(is);
         } catch (IOException e) {
             throw new RuntimeException(e);
