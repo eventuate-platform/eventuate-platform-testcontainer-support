@@ -5,4 +5,11 @@ dependencies {
     // TODO shouldn't need to do this too
     implementation "org.testcontainers:testcontainers:$testContainersVersion"
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+}
+
+test {
+    useJUnitPlatform()
 }
