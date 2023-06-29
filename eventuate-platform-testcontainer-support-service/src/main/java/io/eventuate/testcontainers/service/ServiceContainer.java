@@ -5,6 +5,8 @@ import io.eventuate.common.testcontainers.EventuateGenericContainer;
 import io.eventuate.common.testcontainers.EventuateZookeeperContainer;
 import io.eventuate.messaging.kafka.testcontainers.EventuateKafkaContainer;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
@@ -20,6 +22,7 @@ import java.util.Properties;
 
 public class ServiceContainer extends EventuateGenericContainer<ServiceContainer> {
 
+    private static Logger logger = LoggerFactory.getLogger(ServiceContainer.class);
 
     public ServiceContainer() {
         this("./Dockerfile", "../gradle.properties");
@@ -45,9 +48,18 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
     @NotNull
     private static ServiceContainer makeFromDockerfileOnClasspath(String buildContextPath, String dockerfileName) {
         String relativeToDockerfile = classpathResourceToRelativePath(buildContextPath, dockerfileName);
+        logger.info("Using buildContextPath {} Dockerfile {}", buildContextPath, relativeToDockerfile);
         return new ServiceContainer(new ImageFromDockerfile()
                 .withFileFromPath(buildContextPath, FileSystems.getDefault().getPath("."))
                 .withDockerfilePath(relativeToDockerfile)
+                .withBuildArgs(buildArgsFromSystemProperties()));
+    }
+
+    public static ServiceContainer makeFromDockerfileInFileSystem(String dockerFile) {
+        Path absolutePathToDockerfile = FileSystems.getDefault().getPath(dockerFile).toAbsolutePath();
+        logger.info("Using Dockerfile {}", absolutePathToDockerfile);
+        return new ServiceContainer(new ImageFromDockerfile()
+                .withDockerfile(absolutePathToDockerfile)
                 .withBuildArgs(buildArgsFromSystemProperties()));
     }
 
@@ -65,6 +77,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
             result.put("serviceImageVersion", System.getProperty("eventuate.servicecontainer.serviceimage.version"));
         return result;
     }
+
 
     @Override
     protected int getPort() {

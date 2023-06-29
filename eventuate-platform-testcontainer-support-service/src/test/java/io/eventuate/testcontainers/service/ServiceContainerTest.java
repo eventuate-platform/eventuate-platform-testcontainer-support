@@ -5,14 +5,16 @@ import org.junit.jupiter.api.Test;
 class ServiceContainerTest {
 
     @Test
-    public void shouldStart() {
-        ServiceContainer sc = ServiceContainer.makeFromDockerfileOnClasspath();
-        sc.start();
-        try {
-            // HTTP
-            // Messaging
-        } finally {
-            sc.stop();
+    public void shouldStartContainerBuiltFromDockerfileOnClasspath() {
+        try (ServiceContainer sc = ServiceContainer.makeFromDockerfileOnClasspath()) {
+            sc.start();
+        }
+    }
+
+    @Test
+    public void shouldStartContainerBuildFromDockerfileInFileSystem() {
+        try (ServiceContainer sc = ServiceContainer.makeFromDockerfileInFileSystem("Dockerfile")) {
+            sc.start();
         }
     }
 
