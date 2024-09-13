@@ -10,15 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class ServiceContainer extends EventuateGenericContainer<ServiceContainer> {
 
@@ -30,7 +25,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
 
     public ServiceContainer(String dockerFile, String gradlePropertiesPath) {
         this(new ImageFromDockerfile().withDockerfile(FileSystems.getDefault().getPath(dockerFile))
-                .withBuildArgs(buildArgsFromGradleProperties(gradlePropertiesPath)));
+                .withBuildArgs(GradlePropertiesFileLoader.buildArgsFromGradleProperties(gradlePropertiesPath)));
     }
 
     public ServiceContainer(ImageFromDockerfile imageFromDockerfile) {
@@ -52,7 +47,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         return new ServiceContainer(new ImageFromDockerfile()
                 .withFileFromPath(buildContextPath, FileSystems.getDefault().getPath("."))
                 .withDockerfilePath(relativeToDockerfile)
-                .withBuildArgs(buildArgsFromSystemProperties()));
+                .withBuildArgs(SystemPropertiesLoader.buildArgsFromSystemProperties()));
     }
 
     public static ServiceContainer makeFromDockerfileInFileSystem(String dockerFile) {
@@ -60,7 +55,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         logger.info("Using Dockerfile {}", absolutePathToDockerfile);
         return new ServiceContainer(new ImageFromDockerfile()
                 .withDockerfile(absolutePathToDockerfile)
-                .withBuildArgs(buildArgsFromSystemProperties()));
+                .withBuildArgs(SystemPropertiesLoader.buildArgsFromSystemProperties()));
     }
 
     @NotNull
@@ -70,38 +65,9 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         return root.relativize(path).toString();
     }
 
-    private static Map<String, String> buildArgsFromSystemProperties() {
-        Map<String, String> result = new HashMap<>();
-        putIfNonNull(result, "baseImageVersion", "eventuate.servicecontainer.baseimage.version");
-        putIfNonNull(result, "serviceImageVersion", "eventuate.servicecontainer.serviceimage.version");
-        return result;
-    }
-
-    private static void putIfNonNull(Map<String, String> result, String targetProperty, String sourceProperty) {
-        if (System.getProperty(sourceProperty) != null) {
-            result.put(targetProperty, System.getProperty(sourceProperty));
-        }
-    }
-
-
     @Override
     protected int getPort() {
         return 8080;
-    }
-
-    private static Map<String, String> buildArgsFromGradleProperties(String gradlePropertiesPath) {
-        Properties gradleProperties = new Properties();
-
-        try (InputStream is = Files.newInputStream(Paths.get(gradlePropertiesPath))) {
-            gradleProperties.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Map<String, String> result = new HashMap<>();
-        result.put("baseImageVersion", gradleProperties.getProperty("eventuateExamplesBaseImageVersion"));
-        result.put("serviceImageVersion", gradleProperties.getProperty("version"));
-        return result;
     }
 
     public ServiceContainer withZookeeper(EventuateZookeeperContainer zookeeper) {
