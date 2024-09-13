@@ -72,10 +72,15 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
 
     private static Map<String, String> buildArgsFromSystemProperties() {
         Map<String, String> result = new HashMap<>();
-        result.put("baseImageVersion", System.getProperty("eventuate.servicecontainer.baseimage.version"));
-        if (System.getProperty("eventuate.servicecontainer.serviceimage.version") != null)
-            result.put("serviceImageVersion", System.getProperty("eventuate.servicecontainer.serviceimage.version"));
+        putIfNonNull(result, "baseImageVersion", "eventuate.servicecontainer.baseimage.version");
+        putIfNonNull(result, "serviceImageVersion", "eventuate.servicecontainer.serviceimage.version");
         return result;
+    }
+
+    private static void putIfNonNull(Map<String, String> result, String targetProperty, String sourceProperty) {
+        if (System.getProperty(sourceProperty) != null) {
+            result.put(targetProperty, System.getProperty(sourceProperty));
+        }
     }
 
 
