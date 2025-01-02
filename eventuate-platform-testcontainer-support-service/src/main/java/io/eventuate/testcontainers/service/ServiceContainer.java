@@ -71,14 +71,17 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
     }
 
     public ServiceContainer withZookeeper(EventuateZookeeperContainer zookeeper) {
+        dependsOn(zookeeper);
         return this.withEnv("EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING", zookeeper.getConnectionString());
     }
 
     public ServiceContainer withKafka(EventuateKafkaContainer kafka) {
+        dependsOn(kafka);
         return this.withEnv("EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS", kafka.getConnectionString());
     }
 
     public ServiceContainer withDatabase(EventuateDatabaseContainer<?> database) {
+        dependsOn(database);
         withEnv("SPRING_DATASOURCE_URL", database.getJdbcUrl());
         withEnv("SPRING_DATASOURCE_USERNAME", database.getCredentials().userName);
         withEnv("SPRING_DATASOURCE_PASSWORD", database.getCredentials().password);
