@@ -4,6 +4,7 @@ import io.eventuate.common.testcontainers.EventuateDatabaseContainer;
 import io.eventuate.common.testcontainers.EventuateGenericContainer;
 import io.eventuate.common.testcontainers.EventuateZookeeperContainer;
 import io.eventuate.messaging.kafka.testcontainers.EventuateKafkaContainer;
+import io.eventuate.messaging.kafka.testcontainers.EventuateKafkaNativeContainer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,11 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
     public ServiceContainer withKafka(EventuateKafkaContainer kafka) {
         dependsOn(kafka);
         return this.withEnv("EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS", kafka.getConnectionString());
+    }
+
+    public ServiceContainer withKafka(EventuateKafkaNativeContainer kafka) {
+        dependsOn(kafka);
+        return this.withEnv("EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS", kafka.getBootstrapServersForContainer());
     }
 
     public ServiceContainer withDatabase(EventuateDatabaseContainer<?> database) {
