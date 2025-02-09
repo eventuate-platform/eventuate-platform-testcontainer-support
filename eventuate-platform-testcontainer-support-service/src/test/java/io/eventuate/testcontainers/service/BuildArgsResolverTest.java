@@ -6,11 +6,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SystemPropertiesLoaderTest {
+public class BuildArgsResolverTest {
 
     @Test
     public void shouldLoadSystemProperties() {
-        Map<String, String> result = SystemPropertiesLoader.buildArgsFromSystemProperties();
+        Map<String, String> result = BuildArgsResolver.buildArgs();
         result.forEach((k, v) -> assertNotNull(v));
     }
 }

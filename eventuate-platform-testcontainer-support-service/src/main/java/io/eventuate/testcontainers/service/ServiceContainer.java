@@ -14,19 +14,18 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 public class ServiceContainer extends EventuateGenericContainer<ServiceContainer> {
 
     private static Logger logger = LoggerFactory.getLogger(ServiceContainer.class);
 
     public ServiceContainer() {
-        this("./Dockerfile", "../gradle.properties");
+        this("./Dockerfile");
     }
 
-    public ServiceContainer(String dockerFile, String gradlePropertiesPath) {
+    public ServiceContainer(String dockerFile) {
         this(new ImageFromDockerfile().withDockerfile(FileSystems.getDefault().getPath(dockerFile))
-                .withBuildArgs(GradlePropertiesFileLoader.buildArgsFromGradleProperties(gradlePropertiesPath)));
+                .withBuildArgs(BuildArgsResolver.buildArgs()));
     }
 
     public ServiceContainer(ImageFromDockerfile imageFromDockerfile) {
@@ -48,7 +47,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         return new ServiceContainer(new ImageFromDockerfile()
                 .withFileFromPath(buildContextPath, FileSystems.getDefault().getPath("."))
                 .withDockerfilePath(relativeToDockerfile)
-                .withBuildArgs(SystemPropertiesLoader.buildArgsFromSystemProperties()));
+                .withBuildArgs(BuildArgsResolver.buildArgs()));
     }
 
     public static ServiceContainer makeFromDockerfileInFileSystem(String dockerFile) {
@@ -56,7 +55,7 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
         logger.info("Using Dockerfile {}", absolutePathToDockerfile);
         return new ServiceContainer(new ImageFromDockerfile()
                 .withDockerfile(absolutePathToDockerfile)
-                .withBuildArgs(SystemPropertiesLoader.buildArgsFromSystemProperties()));
+                .withBuildArgs(BuildArgsResolver.buildArgs()));
     }
 
     @NotNull

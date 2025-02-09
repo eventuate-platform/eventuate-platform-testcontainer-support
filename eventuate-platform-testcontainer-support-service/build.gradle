@@ -13,9 +13,7 @@ sourceSets {
 dependencies {
     implementation "io.eventuate.common:eventuate-common-testcontainers"
     implementation "io.eventuate.messaging.kafka:eventuate-messaging-kafka-testcontainers"
-
-    // TODO shouldn"t need to do this too
-    implementation "org.testcontainers:testcontainers:$testContainersVersion"
+    runtimeOnly "io.eventuate.examples.dockerimages:eventuate-examples-docker-images:$eventuateDockerImagesVersion"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
