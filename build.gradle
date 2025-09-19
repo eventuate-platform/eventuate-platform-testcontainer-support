@@ -34,7 +34,6 @@ subprojects {
         dependencies {
             implementation platform("io.eventuate.common:eventuate-common-bom:${eventuateCommonVersion}")
             implementation platform("io.eventuate.messaging.kafka:eventuate-messaging-kafka-bom:${eventuateMessagingKafkaVersion}")
-            testImplementation "junit:junit:4.12"
         }
 }
 
@@ -49,4 +48,7 @@ gradle.projectsEvaluated {
 
 configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
+}
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }

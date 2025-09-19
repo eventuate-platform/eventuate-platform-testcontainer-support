@@ -13,7 +13,6 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ServiceContainer extends EventuateGenericContainer<ServiceContainer> {
 
@@ -60,8 +59,8 @@ public class ServiceContainer extends EventuateGenericContainer<ServiceContainer
 
     @NotNull
     private static String classpathResourceToRelativePath(String buildContextPath, String dockerfileName) {
-        Path path = Paths.get(ServiceContainer.class.getClassLoader().getResource(dockerfileName).getFile()).toAbsolutePath();
-        Path root = Paths.get(buildContextPath).toAbsolutePath();
+        Path path = Path.of(ServiceContainer.class.getClassLoader().getResource(dockerfileName).getFile()).toAbsolutePath();
+        Path root = Path.of(buildContextPath).toAbsolutePath();
         return root.relativize(path).toString();
     }
 
