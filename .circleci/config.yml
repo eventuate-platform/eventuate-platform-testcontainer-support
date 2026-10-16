@@ -8,5 +8,6 @@ workflows:
       - eventuate-gradle-build-and-test/build-and-test:
           name: build-and-deploy
           script: ./gradlew build publishEventuateArtifacts
+          java_version_to_install: "17"
           context:
             - publish
